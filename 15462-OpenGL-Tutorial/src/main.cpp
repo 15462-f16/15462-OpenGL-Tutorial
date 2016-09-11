@@ -8,12 +8,17 @@
 using namespace std;
 
 bool colorMode;
+bool redFirst;
 
 //Called when a key is pressed
 void handleKeypress(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'c':
 		colorMode = !colorMode;
+		glutPostRedisplay();
+		break;
+	case 'r':
+		redFirst = !redFirst;
 		glutPostRedisplay();
 		break;
 	case 27: //Escape key
@@ -23,6 +28,7 @@ void handleKeypress(unsigned char key, int x, int y) {
 //Initializes 3D rendering
 void initRendering() {
 	colorMode = false;
+	redFirst = true;
 	//Makes 3D drawing work when something is in front of something else
 	glEnable(GL_DEPTH_TEST);
 }
@@ -99,6 +105,66 @@ void drawScene2D()
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
+void drawGreenSquare() 
+{
+	glColor4f(0.5, 1, 0.5, 0.5); // alpha!!!
+
+	glPushMatrix();
+	glScalef(0.25, 0.25, 0.25);
+	glTranslatef(-0.25, 0.25, 0);
+	glBegin(GL_QUADS);
+		glVertex2f(-1, -1);
+		glVertex2f(1, -1);
+		glVertex2f(1, 1);
+		glVertex2f(-1, 1);
+	glEnd();
+	glPopMatrix();
+}
+
+void drawRedSquare()
+{
+	glColor4f(1, 0.5, 0.5, 0.5); // alpha!!!
+
+	glPushMatrix();
+	glScalef(0.25, 0.25, 0.25);
+	glTranslatef(0.25, -0.25, 0);
+	glBegin(GL_QUADS);
+		glVertex2f(-1, -1);
+		glVertex2f(1, -1);
+		glVertex2f(1, 1);
+		glVertex2f(-1, 1);
+	glEnd();
+	glPopMatrix();
+}
+
+void drawSceneAlpha()
+{
+	//Clear information from last draw
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
+	glLoadIdentity(); //Reset the drawing perspective
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // many possible blend modes here!
+
+	if (redFirst)
+	{
+		drawRedSquare();
+		glTranslatef(0, 0, -0.01);
+		drawGreenSquare();
+	}
+	else
+	{
+		drawGreenSquare();
+		glTranslatef(0, 0, -0.01);
+		drawRedSquare();
+	}
+
+	glDisable(GL_BLEND);
+
+	glutSwapBuffers();
+}
+
 int main(int argc, char** argv) {
 	//Initialize GLUT
 	glutInit(&argc, argv);
@@ -108,7 +174,7 @@ int main(int argc, char** argv) {
 	glutCreateWindow("15-462 OpenGL Tutorial");
 	initRendering(); //Initialize rendering
 	//Set handler functions for drawing, keypresses, and window resizes
-	glutDisplayFunc(drawScene2D);
+	glutDisplayFunc(drawSceneAlpha);
 	glutKeyboardFunc(handleKeypress);
 	glutReshapeFunc(handleResize);
 	glutMainLoop(); //Start the main loop
