@@ -7,7 +7,6 @@
 
 using namespace std;
 
-bool colorMode;
 bool redFirst;
 
 float t = 0.0f;
@@ -16,10 +15,6 @@ float dt = 0.001f;
 //Called when a key is pressed
 void handleKeypress(unsigned char key, int x, int y) {
 	switch (key) {
-	case 'c':
-		colorMode = !colorMode;
-		glutPostRedisplay();
-		break;
 	case 'r':
 		redFirst = !redFirst;
 		glutPostRedisplay();
@@ -30,7 +25,6 @@ void handleKeypress(unsigned char key, int x, int y) {
 }
 //Initializes 3D rendering
 void initRendering() {
-	colorMode = false;
 	redFirst = true;
 	//Makes 3D drawing work when something is in front of something else
 	glEnable(GL_DEPTH_TEST);
