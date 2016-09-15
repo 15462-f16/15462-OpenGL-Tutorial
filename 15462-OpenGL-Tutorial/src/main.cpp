@@ -28,9 +28,6 @@ void initRendering() {
 	redFirst = true;
 	//Makes 3D drawing work when something is in front of something else
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	//glEnable(GL_COLOR_MATERIAL);
 }
 //Called when the window is resized
 void handleResize(int w, int h) {
@@ -50,27 +47,18 @@ void drawScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
-	
-	//GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	//GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	//GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	//GLfloat light_position[] = { 5.0, 5.0, 5.0, 0.0 };
 
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-	glTranslatef(cos(t), 0.0f, -7.0f);  // Move right and into the screen
+	glTranslatef(1.5f, 0.0f, -7.0f);
 	glScalef(0.5f, 0.5f, 0.5f);
-	glRotatef(t*100, 1, 0, 0);
-	glRotatef(t * 50, 0, 1, 0);
+
+	glPushMatrix();
+	glTranslatef(sin(t), 0, 0);
+	glRotatef(t * 100, 0, 0, 1);
 
 	glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
 	// Top face (y = 1.0f)
 	// Define vertices in counter-clockwise (CCW) order with normal pointing out
 	glColor3f(0.0f, 1.0f, 0.0f);     // Green
-	glNormal3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(1.0f, 1.0f, -1.0f);
 	glVertex3f(-1.0f, 1.0f, -1.0f);
 	glVertex3f(-1.0f, 1.0f, 1.0f);
@@ -78,7 +66,6 @@ void drawScene() {
 
 	// Bottom face (y = -1.0f)
 	glColor3f(1.0f, 0.5f, 0.0f);     // Orange
-	glNormal3f(0.0f, -1.0f, 0.0f);
 	glVertex3f(1.0f, -1.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -86,7 +73,6 @@ void drawScene() {
 
 	// Front face  (z = 1.0f)
 	glColor3f(1.0f, 0.0f, 0.0f);     // Red
-	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(-1.0f, 1.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -94,7 +80,6 @@ void drawScene() {
 
 	// Back face (z = -1.0f)
 	glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
-	glNormal3f(0.0f, 0.0f, -1.0f);
 	glVertex3f(1.0f, -1.0f, -1.0f);
 	glVertex3f(-1.0f, -1.0f, -1.0f);
 	glVertex3f(-1.0f, 1.0f, -1.0f);
@@ -102,7 +87,6 @@ void drawScene() {
 
 	// Left face (x = -1.0f)
 	glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-	glNormal3f(-1.0f, 0.0f, 0.0f);
 	glVertex3f(-1.0f, 1.0f, 1.0f);
 	glVertex3f(-1.0f, 1.0f, -1.0f);
 	glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -110,17 +94,17 @@ void drawScene() {
 
 	// Right face (x = 1.0f)
 	glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
-	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 1.0f, -1.0f);
 	glVertex3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(1.0f, -1.0f, 1.0f);
 	glVertex3f(1.0f, -1.0f, -1.0f);
 	glEnd();  // End of drawing color-cube
+	glPopMatrix();
 	
 	glutSwapBuffers(); //Send the 3D scene to the screen
 
-	t += dt;
-	glutPostRedisplay();
+	t += dt; // Move the time forward
+	glutPostRedisplay(); // Invoke drawing another frame
 }
 
 void drawScene2D()
@@ -212,7 +196,7 @@ int main(int argc, char** argv) {
 	//Initialize GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800, 800); //Set the window size
+	glutInitWindowSize(1280, 800); //Set the window size
 	//Create the window
 	glutCreateWindow("15-462 OpenGL Tutorial");
 	initRendering(); //Initialize rendering
